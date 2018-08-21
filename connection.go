@@ -6,9 +6,9 @@ import (
 	"fmt"
 )
 
-type StorageConnection struct {
+var (
 	Connection *redis.Client
-}
+)
 
 /**
  * Initiate connection into cache storage
@@ -18,7 +18,7 @@ type StorageConnection struct {
  * @param 	db_no int 			Database No
  * @return {[type]}      [description]
  */
-func (this *StorageConnection) Connect(storage_type string, address string, password string, db_no int) {
+func Connect(storage_type string, address string, password string, db_no int) {
 
 	switch storage_type {
 	case "redis":
@@ -28,15 +28,14 @@ func (this *StorageConnection) Connect(storage_type string, address string, pass
 			DB:       db_no,
 		})
 
-		pong, err := client.Ping().Result()
+		_, err := client.Ping().Result()
 
 		if err != nil {
 			panic(err)
 		}
-		defer redis.Close()
 
-		this.Connection = client
+		Connection = client
 	default:
-		fmt.Printf("%s type is not supported.", os)
+		fmt.Printf("%s type is not supported.", storage_type)
 	}
 }
